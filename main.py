@@ -17,7 +17,7 @@ class player:
 import pygame, math, sys
 from pygame.locals import *
 screen = pygame.display.set_mode((1024, 768))
-guy = pygame.image.load('car.png')
+guy = pygame.image.load('img/player.png')
 clock = pygame.time.Clock()
 k_up = k_down = k_left = k_right = 0
 x=y=100 #spawn location
