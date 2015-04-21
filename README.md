@@ -4,10 +4,12 @@ please state it here
 
 #ISSUES#
 
--Only way to exit is to press 'escape' key
--Players can walk out of bounds
+- Only way to exit is to press 'escape' key
+- Players can walk out of bounds
 
 
 #Current status#
 
--Basic controls	DONE
+Task | Status | Comments
+------------ | ------------- | -------------
+Basic Movement | Done | Players can walk out of bounds and no collisions with solid objects
