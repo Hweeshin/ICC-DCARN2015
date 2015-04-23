@@ -1,4 +1,4 @@
-class player:
+class Player:
     def __init__(self,x1,y1):
         self.x=x1
         self.y=y1
@@ -12,7 +12,7 @@ class player:
         rect.topleft = (self.x, self.y)
         screen.blit(guyimg, rect)
 
-class wall:
+class Wall:
     def __init__(self,x1,y1):
         self.x=x1
         self.y=y1
@@ -33,8 +33,8 @@ clock = pygame.time.Clock()
 k_up = k_down = k_left = k_right = 0
 x=y=100 #spawn location
 BLACK = (0,0,0)
-me=player(x,y)
-newwall=wall(0,0)
+me=Player(x,y)
+newwall=Wall(0,0)
 textfont=pygame.font.SysFont("arial", 12)
 while 1:
     # USER INPUT
@@ -51,14 +51,12 @@ while 1:
     screen.fill(BLACK)
     
     # SIMULATION
-    # .. new position based on current position, speed and direction
     x += k_left+k_right
     y += k_down+k_up
-    
     # RENDERING
-    # .. position the car on screen
     me.pos(x, y)
+    #if((guyimg.get_rect()).colliderect(wallimg.get_rect())):
+    #    print("Collided")
     newwall.draw()
     
-    # .. render the car to screen
     pygame.display.flip()
