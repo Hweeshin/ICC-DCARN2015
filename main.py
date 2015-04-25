@@ -74,8 +74,9 @@ while 1:
         if me.rect.colliderect(listitem[x].rect)==True:
             del listitem[x]
             print("Collected")
-        if x==len(listitem)-1: x=-1
-        else:
-            x-=1
+            if x==len(listitem)-1: x=-1
+            else:
+                x-=1
+        else: x-=1
     
     pygame.display.flip()
