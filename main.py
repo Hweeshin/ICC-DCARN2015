@@ -63,14 +63,15 @@ while 1:
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
         #if event.type == pygame.QUIT: pygame.quit ()
     screen.fill(BLACK)
-    
+    currentx=me.x
+    currenty=me.y
     me.changepos(k_left+k_right, k_down+k_up) #move the player to the new location
     if me.rect.colliderect(newwall.rect)==True:
         print("Collided")
     newwall.draw()
     x=len(listitem)-1
     while x>=0:
-        listitem[x].draw() #BUG: ONLY DRAWS ONE ITEM, MULTIPLE ITEM DOES NOT GET DRAWN
+        listitem[x].draw()
         if me.rect.colliderect(listitem[x].rect)==True:
             del listitem[x]
             print("Collected")
