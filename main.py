@@ -46,7 +46,7 @@ screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 k_up = k_down = k_left = k_right = 0
 BLACK = (0,0,0)
-listitem=[Item(50,100, pygame.image.load('img/item.png'))]
+listitem=[Item(50,100, pygame.image.load('img/item.png')), Item(200,200, pygame.image.load('img/item.png'))]
 me=Player(100,100, pygame.image.load('img/player.png'))
 newwall=Wall(0,0, pygame.image.load('img/wall.png'))
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
@@ -70,12 +70,10 @@ while 1:
     newwall.draw()
     x=len(listitem)-1
     while x>=0:
-        listitem[x].draw()
+        listitem[x].draw() #BUG: ONLY DRAWS ONE ITEM, MULTIPLE ITEM DOES NOT GET DRAWN
         if me.rect.colliderect(listitem[x].rect)==True:
-            #temp=listitem[x-1]
             del listitem[x]
             print("Collected")
-            #listitem.remove(listitem[x-1])
         if x==len(listitem)-1: x=-1
         else:
             x-=1
