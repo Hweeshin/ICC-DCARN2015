@@ -26,6 +26,17 @@ class Wall:
     def draw(self):
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
+
+class Item:
+    def __init__(self,x,y, surface):
+        self.x=x
+        self.y=y
+        self.surface=surface
+        self.rect=self.surface.get_rect()
+        self.draw()
+    def draw(self):
+        self.rect.topleft=(self.x, self.y)
+        screen.blit(self.surface, self.rect)
         
 # INTIALISATION
 import pygame, math, sys
@@ -35,6 +46,7 @@ screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 k_up = k_down = k_left = k_right = 0
 BLACK = (0,0,0)
+listitem=[Item(50,100, pygame.image.load('img/item.png'))]
 me=Player(100,100, pygame.image.load('img/player.png'))
 newwall=Wall(0,0, pygame.image.load('img/wall.png'))
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
@@ -53,9 +65,19 @@ while 1:
     screen.fill(BLACK)
     
     me.changepos(k_left+k_right, k_down+k_up) #move the player to the new location
-    collided=me.rect.colliderect(newwall.surface.get_rect())
-    if collided==True:
+    if me.rect.colliderect(newwall.rect)==True:
         print("Collided")
     newwall.draw()
+    x=len(listitem)-1
+    while x>=0:
+        listitem[x].draw()
+        if me.rect.colliderect(listitem[x].rect)==True:
+            #temp=listitem[x-1]
+            del listitem[x]
+            print("Collected")
+            #listitem.remove(listitem[x-1])
+        if x==len(listitem)-1: x=-1
+        else:
+            x-=1
     
     pygame.display.flip()
