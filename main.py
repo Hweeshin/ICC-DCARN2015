@@ -5,6 +5,7 @@ class Player:
         self.y=y
         self.surface=surface
         self.speed=5
+        self.rect=self.surface.get_rect()
     def changepos(self, changex, changey):
         self.pos(self.x+changex, self.y+changey)
     def pos(self, x,y):
@@ -12,20 +13,19 @@ class Player:
         self.y=y
         self.draw()
     def draw(self):
-        rect = self.surface.get_rect()
-        rect.topleft = (self.x, self.y)
-        screen.blit(self.surface, rect)
+        self.rect.topleft = (self.x, self.y)
+        screen.blit(self.surface, self.rect)
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
         self.x=x
         self.y=y
         self.surface=surface
+        self.rect=self.surface.get_rect()
         self.draw()
     def draw(self):
-        wall1=self.surface.get_rect()
-        wall1.topleft=(self.x, self.y)
-        screen.blit(self.surface, wall1)
+        self.rect.topleft=(self.x, self.y)
+        screen.blit(self.surface, self.rect)
         
 # INTIALISATION
 import pygame, math, sys
@@ -53,8 +53,9 @@ while 1:
     screen.fill(BLACK)
     
     me.changepos(k_left+k_right, k_down+k_up) #move the player to the new location
-    #if((me.surface.get_rect()).colliderect(newwall.surface.get_rect())==True):
-    #    print("Collided")
+    collided=me.rect.colliderect(newwall.surface.get_rect())
+    if collided==True:
+        print("Collided")
     newwall.draw()
     
     pygame.display.flip()
