@@ -38,14 +38,21 @@ class Item:
         screen.blit(self.surface, self.rect)
         
 # INTIALISATION
-import pygame, math, sys
+import pygame, math, sys, random
 from pygame.locals import *
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 k_up = k_down = k_left = k_right = 0
 BLACK = (0,0,0)
-listitem=[Item(50,100, pygame.image.load('img/item.png')), Item(200,200, pygame.image.load('img/item.png'))]
+#Generate items in random positions
+listitem = []
+for i in range(6):
+    xrand1 = random.randint(0, 400)
+    xrand2 = random.randint(400, 800) #for more even spacing of items
+    yrand = random.randint(100*(i-1), 100*i)
+    listitem.append(Item(xrand1, yrand, pygame.image.load('img/item.png')))
+    listitem.append(Item(xrand2, yrand, pygame.image.load('img/item.png')))
 me=Player(100,100, pygame.image.load('img/player.png'))
 walllist=[Wall(0,0, pygame.image.load('img/wall.png')), Wall(300,300, pygame.image.load('img/wall.png'))]
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
