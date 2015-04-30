@@ -14,6 +14,10 @@ class Player:
         self.rect.topleft = (self.x, self.y)
     def draw(self):
         screen.blit(self.surface, self.rect)
+    def get_pos_x(self):
+        return self.x
+    def get_pos_y(self):
+        return self.y
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
