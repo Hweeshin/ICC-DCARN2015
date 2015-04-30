@@ -62,20 +62,30 @@ while 1:
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
         #if event.type == pygame.QUIT: pygame.quit ()
     screen.fill(BLACK)
-    currentx=me.x
-    currenty=me.y
     me.changepos(k_left+k_right, 0) #move the player to the new location
     x=len(walllist)-1
-    while x>=0:
-        if me.rect.colliderect(walllist[x].rect)==True:
-            me.pos(walllist[x].x+1+walllist[x].rect.width,me.y)
-        x-=1
+    if k_left+k_right<0:
+        while x>=0:
+            if me.rect.colliderect(walllist[x].rect)==True:
+                me.pos(walllist[x].x+walllist[x].rect.width,me.y)
+            x-=1
+    else:
+        while x>=0:
+            if me.rect.colliderect(walllist[x].rect)==True:
+                me.pos(walllist[x].x-me.rect.width,me.y)
+            x-=1
     x=len(walllist)-1
     me.changepos(0, k_down+k_up) #move the player to the new location
-    while x>=0:
-        if me.rect.colliderect(walllist[x].rect)==True:
-            me.pos(me.x,walllist[x].y+1+walllist[x].rect.height)
-        x-=1
+    if k_up+k_down<0:
+          while x>=0:
+            if me.rect.colliderect(walllist[x].rect)==True:
+                me.pos(me.x,walllist[x].y+walllist[x].rect.height)
+            x-=1
+    else:
+        while x>=0:
+            if me.rect.colliderect(walllist[x].rect)==True:
+                me.pos(me.x,walllist[x].y-me.rect.height)
+            x-=1
     x=len(walllist)-1
     while x>=0:
         walllist[x].draw()
