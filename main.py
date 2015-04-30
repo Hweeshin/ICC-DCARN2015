@@ -4,7 +4,7 @@ class Player:
         self.x=x
         self.y=y
         self.surface=surface
-        self.speed=5
+        self.speed=7
         self.rect=self.surface.get_rect()
     def changepos(self, changex, changey):
         self.pos(self.x+changex, self.y+changey)
