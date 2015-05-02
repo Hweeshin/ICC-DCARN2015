@@ -14,4 +14,4 @@ Task | Status | Comments
 ------------ | ------------- | -------------
 Basic Movement | Done | Players can walk out of bounds.
 Solid objects | Done | Only collision detection, the solid property has not being given
-Collectible items | Done | Generates 12 collectible items in random locations
+Collectible items | Done | NIL
