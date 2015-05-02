@@ -90,8 +90,34 @@ while 1:
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
         #if event.type == pygame.QUIT: pygame.quit ()
     screen.fill(BLACK)
-    him.changepos(k_a+k_d, k_w+k_s)
-    me.changepos(k_left+k_right, 0) #move the player to the new location
+    #him.changepos(k_a+k_d, k_w+k_s)
+    him.changepos(k_a+k_d, 0) #move the enemy on X axis
+    x=len(walllist)-1
+    if k_d+k_a<0:
+        while x>=0:
+            if him.rect.colliderect(walllist[x].rect)==True:
+                him.pos(walllist[x].x+walllist[x].rect.width,him.y)
+            x-=1
+    else:
+        while x>=0:
+            if him.rect.colliderect(walllist[x].rect)==True:
+                him.pos(walllist[x].x-him.rect.width,him.y)
+            x-=1
+    x=len(walllist)-1
+    him.changepos(0, k_w+k_s) #move the enemy on Y axis
+    if k_w+k_s<0:
+          while x>=0:
+            if him.rect.colliderect(walllist[x].rect)==True:
+                him.pos(him.x,walllist[x].y+walllist[x].rect.height)
+            x-=1
+    else:
+        while x>=0:
+            if him.rect.colliderect(walllist[x].rect)==True:
+                him.pos(him.x,walllist[x].y-him.rect.height)
+            x-=1
+
+    
+    me.changepos(k_left+k_right, 0) #move the player on X axis
     x=len(walllist)-1
     if k_left+k_right<0:
         while x>=0:
@@ -104,7 +130,7 @@ while 1:
                 me.pos(walllist[x].x-me.rect.width,me.y)
             x-=1
     x=len(walllist)-1
-    me.changepos(0, k_down+k_up) #move the player to the new location
+    me.changepos(0, k_down+k_up) #move the player on Y axis
     if k_up+k_down<0:
           while x>=0:
             if me.rect.colliderect(walllist[x].rect)==True:
