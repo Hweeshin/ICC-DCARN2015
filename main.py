@@ -4,7 +4,7 @@ class Player:
         self.x=x
         self.y=y
         self.surface=surface
-        self.speed=7
+        self.speed=8
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
@@ -25,7 +25,7 @@ class Enemy:
         self.x=x
         self.y=y
         self.surface=surface
-        self.speed=7
+        self.speed=8
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
@@ -58,37 +58,67 @@ class Item:
     def draw(self):
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
-        
+
+class Camera(object):
+    def __init__(self, camera_func, width, height):
+        self.camera_func = camera_func
+        self.state = Rect(0, 0, width, height)
+
+    def apply(self, target):
+        return target.rect.move(self.state.topleft)
+
+    def update(self, target):
+        self.state = self.camera_func(self.state, target.rect)
+
+def simple_camera(camera, target_rect):
+    l, t, _, _ = target_rect # l = left,  t = top
+    _, _, w, h = camera      # w = width, h = height
+    return Rect(-l+HALF_WIDTH, -t+HALF_HEIGHT, w, h)
+
+def complex_camera(camera, target_rect):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    l, t, _, _ = -l+HALF_WIDTH, -t+HALF_HEIGHT, w, h # center player
+
+    l = min(0, l)                           # stop scrolling at the left edge
+    l = max(-(camera.width-WIN_WIDTH), l)   # stop scrolling at the right edge
+    t = max(-(camera.height-WIN_HEIGHT), t) # stop scrolling at the bottom
+    t = min(0, t)                           # stop scrolling at the top
+
+    return Rect(l, t, w, h)
 # INTIALISATION
 import pygame, math, sys
 from pygame.locals import *
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
-level=["W          W", "WW  I       "]#Note: The width must always be equal.
+level=[]
+level = open("level.txt").read().split('\n')#Note: The width must always be equal.
 size=32 #Size of one tile. It should be a square unless some idiot decides otherwise
 k_up = k_down = k_left = k_right = 0
 k_w = k_s = k_a = k_d = 0
 BLACK = (0,0,0)
 walllist=[]
 listitem=[]
-heightmax=len(level)-1
-widthmax=len(level[0])-1
+heighttilemax=len(level)
+widthtilemax=len(level[0])
+heightmax=heighttilemax*size
+widthmax=widthtilemax*size
 y=0
-while(y<=heightmax):
+while(y<=heighttilemax-1):
     x=0
-    while(x<=widthmax):
+    while(x<=widthtilemax-1):
         if(level[y][x]=="W"):
             walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png')))
         elif(level[y][x]=="I"):
             listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png')))
+        elif(level[y][x]=="P"):
+            me=Player(x*size,y*size, pygame.image.load('img/player.png'))
+        elif(level[y][x]=="S"):
+            him=Enemy(x*size,y*size, pygame.image.load('img/enemy.png'))
         x+=1
     y+=1
     
-#listitem=[Item(50,100, pygame.image.load('img/item.png')), Item(200,200, pygame.image.load('img/item.png'))]
-me=Player(100,100, pygame.image.load('img/player.png'))
-him=Enemy(400,400, pygame.image.load('img/enemy.png'))
-#walllist=[Wall(0,0, pygame.image.load('img/wall.png')), Wall(300,300, pygame.image.load('img/wall.png'))]
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
 while 1:
     # USER INPUT
@@ -163,8 +193,12 @@ while 1:
             x-=1
     if(me.x<0):
         me.pos(0, me.y)
+    elif(me.x+me.rect.width>widthmax):
+        me.pos(widthmax-me.rect.width, me.y)
     if(me.y<0):
         me.pos(me.x, 0)
+    elif(me.y+me.rect.height>heightmax):
+        me.pos(me.x, heightmax-me.rect.height)
     x=len(walllist)-1
     while x>=0:
         walllist[x].draw()
