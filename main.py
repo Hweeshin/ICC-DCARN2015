@@ -65,13 +65,30 @@ from pygame.locals import *
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
+level=["W          W", "WW  I       "]#Note: The width must always be equal.
+size=32 #Size of one tile. It should be a square unless some idiot decides otherwise
 k_up = k_down = k_left = k_right = 0
 k_w = k_s = k_a = k_d = 0
 BLACK = (0,0,0)
-listitem=[Item(50,100, pygame.image.load('img/item.png')), Item(200,200, pygame.image.load('img/item.png'))]
+walllist=[]
+listitem=[]
+heightmax=len(level)-1
+widthmax=len(level[0])-1
+y=0
+while(y<=heightmax):
+    x=0
+    while(x<=widthmax):
+        if(level[y][x]=="W"):
+            walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png')))
+        elif(level[y][x]=="I"):
+            listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png')))
+        x+=1
+    y+=1
+    
+#listitem=[Item(50,100, pygame.image.load('img/item.png')), Item(200,200, pygame.image.load('img/item.png'))]
 me=Player(100,100, pygame.image.load('img/player.png'))
 him=Enemy(400,400, pygame.image.load('img/enemy.png'))
-walllist=[Wall(0,0, pygame.image.load('img/wall.png')), Wall(300,300, pygame.image.load('img/wall.png'))]
+#walllist=[Wall(0,0, pygame.image.load('img/wall.png')), Wall(300,300, pygame.image.load('img/wall.png'))]
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
 while 1:
     # USER INPUT
@@ -115,7 +132,10 @@ while 1:
             if him.rect.colliderect(walllist[x].rect)==True:
                 him.pos(him.x,walllist[x].y-him.rect.height)
             x-=1
-
+    if(him.x<0):
+        him.pos(0, me.y)
+    if(him.y<0):
+        him.pos(me.x, 0)
     
     me.changepos(k_left+k_right, 0) #move the player on X axis
     x=len(walllist)-1
@@ -141,6 +161,10 @@ while 1:
             if me.rect.colliderect(walllist[x].rect)==True:
                 me.pos(me.x,walllist[x].y-me.rect.height)
             x-=1
+    if(me.x<0):
+        me.pos(0, me.y)
+    if(me.y<0):
+        me.pos(me.x, 0)
     x=len(walllist)-1
     while x>=0:
         walllist[x].draw()
