@@ -91,6 +91,7 @@ import pygame, math, sys
 from pygame.locals import *
 pygame.init()
 screenw = pygame.display.set_mode((800, 600))
+blacksurface=pygame.Surface((800,600))
 clock = pygame.time.Clock()
 level=[]
 level = open("level.txt").read().split('\n')#Note: The width must always be equal.
@@ -228,5 +229,6 @@ while 1:
     diffy+=newy-prevy
     me.draw()
     him.draw()
+    screenw.blit(blacksurface, (0,0))
     screenw.blit(screen, (-diffx, -diffy))
     pygame.display.flip()
