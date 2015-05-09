@@ -15,10 +15,10 @@ class Player:
         self.rect.topleft = (self.x, self.y)
     def draw(self):
         screen.blit(self.surface, self.rect)
-    def get_pos_x(self):
-        return self.x
-    def get_pos_y(self):
-        return self.y
+    def centrex(self):
+        return self.x+(self.rect.width/2)
+    def centrey(self):
+        return self.y+(self.rect.height/2)
 #slendy or any other enemy
 class Enemy:
     def __init__(self,x,y, surface):
@@ -104,8 +104,6 @@ heighttilemax=len(level)
 widthtilemax=len(level[0])
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
-diffx=-heightmax/2
-diffy=-widthmax/2
 screen=pygame.Surface((widthmax, heightmax))
 y=0
 while(y<=heighttilemax-1):
@@ -121,7 +119,10 @@ while(y<=heighttilemax-1):
             him=Enemy(x*size,y*size, pygame.image.load('img/enemy.png'))
         x+=1
     y+=1
-    
+
+diffx=me.centrex()-widthmax/2
+diffy=me.centrey()-heightmax/2
+
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
 while 1:
     # USER INPUT
