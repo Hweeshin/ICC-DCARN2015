@@ -59,45 +59,22 @@ class Item:
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
 
-class Camera(object):
-    def __init__(self, camera_func, width, height):
-        self.camera_func = camera_func
-        self.state = Rect(0, 0, width, height)
 
-    def apply(self, target):
-        return target.rect.move(self.state.topleft)
-
-    def update(self, target):
-        self.state = self.camera_func(self.state, target.rect)
-
-def simple_camera(camera, target_rect):
-    l, t, _, _ = target_rect # l = left,  t = top
-    _, _, w, h = camera      # w = width, h = height
-    return Rect(-l+HALF_WIDTH, -t+HALF_HEIGHT, w, h)
-
-def complex_camera(camera, target_rect):
-    l, t, _, _ = target_rect
-    _, _, w, h = camera
-    l, t, _, _ = -l+HALF_WIDTH, -t+HALF_HEIGHT, w, h # center player
-
-    l = min(0, l)                           # stop scrolling at the left edge
-    l = max(-(camera.width-WIN_WIDTH), l)   # stop scrolling at the right edge
-    t = max(-(camera.height-WIN_HEIGHT), t) # stop scrolling at the bottom
-    t = min(0, t)                           # stop scrolling at the top
-
-    return Rect(l, t, w, h)
 # INTIALISATION
 import pygame, math, sys
 from pygame.locals import *
 pygame.init()
-screenw = pygame.display.set_mode((800, 600))
-blacksurface=pygame.Surface((800,600))
+windowheight=600
+windowwidth=800
+screenw = pygame.display.set_mode((windowwidth, windowheight))
+blacksurface=pygame.Surface((windowwidth,windowheight))
 clock = pygame.time.Clock()
 level=[]
 level = open("level.txt").read().split('\n')#Note: The width must always be equal.
 size=32 #Size of one tile. It should be a square unless some idiot decides otherwise
 k_up = k_down = k_left = k_right = 0
 k_w = k_s = k_a = k_d = 0
+itemcount=0
 BLACK = (0,0,0)
 walllist=[]
 listitem=[]
@@ -114,6 +91,7 @@ while(y<=heighttilemax-1):
             walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png')))
         elif(level[y][x]=="I"):
             listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png')))
+            itemcount+=1
         elif(level[y][x]=="P"):
             me=Player(x*size,y*size, pygame.image.load('img/player.png'))
         elif(level[y][x]=="S"):
@@ -121,8 +99,8 @@ while(y<=heighttilemax-1):
         x+=1
     y+=1
 
-diffx=me.centrex()-widthmax/2
-diffy=me.centrey()-heightmax/2
+diffx=me.centrex()-windowwidth/2
+diffy=me.centrey()-windowheight/2
 
 textfont=pygame.font.SysFont("arial", 12) #test code for now, leave here for text printing
 while 1:
@@ -217,16 +195,17 @@ while 1:
         listitem[x].draw()
         if me.rect.colliderect(listitem[x].rect)==True:
             del listitem[x]
+            itemcount-=1
             print("Collected")
             if x==len(listitem)-1: x=-1
             else:
                 x-=1
         else: x-=1
+        if itemcount==0:
+            print("VICTORY")
 
-    newx=me.x
-    newy=me.y
-    diffx+=newx-prevx
-    diffy+=newy-prevy
+    diffx+=me.x-prevx
+    diffy+=me.y-prevy
     me.draw()
     him.draw()
     screenw.blit(blacksurface, (0,0))
