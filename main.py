@@ -90,7 +90,7 @@ def complex_camera(camera, target_rect):
 import pygame, math, sys
 from pygame.locals import *
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screenw = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 level=[]
 level = open("level.txt").read().split('\n')#Note: The width must always be equal.
@@ -104,6 +104,9 @@ heighttilemax=len(level)
 widthtilemax=len(level[0])
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
+diffx=-heightmax/2
+diffy=-widthmax/2
+screen=pygame.Surface((widthmax, heightmax))
 y=0
 while(y<=heighttilemax-1):
     x=0
@@ -166,7 +169,9 @@ while 1:
         him.pos(0, me.y)
     if(him.y<0):
         him.pos(me.x, 0)
-    
+
+    prevx=me.x
+    prevy=me.y
     me.changepos(k_left+k_right, 0) #move the player on X axis
     x=len(walllist)-1
     if k_left+k_right<0:
@@ -215,6 +220,12 @@ while 1:
             else:
                 x-=1
         else: x-=1
+
+    newx=me.x
+    newy=me.y
+    diffx+=newx-prevx
+    diffy+=newy-prevy
     me.draw()
     him.draw()
+    screenw.blit(screen, (-diffx, -diffy))
     pygame.display.flip()
