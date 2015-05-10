@@ -87,9 +87,9 @@ while(y<=heighttilemax-1):
     x=0
     while(x<=widthtilemax-1):
         if(level[y][x]=="W"):
-            walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png')))
+            walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png').convert()))
         elif(level[y][x]=="I"):
-            listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png')))
+            listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png').convert()))
             itemcount+=1
         elif(level[y][x]=="P"):
             me=Player(x*size,y*size, pygame.image.load('img/player.png'))
