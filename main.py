@@ -8,7 +8,9 @@ class Player:
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
-        self.pos(self.x+changex, self.y+changey)
+        self.x+=changex
+        self.y+=changey
+        self.rect.move_ip(changex, changey)
     def pos(self, x,y):
         self.x=x
         self.y=y
@@ -29,7 +31,9 @@ class Enemy:
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
-        self.pos(self.x+changex, self.y+changey)
+        self.x+=changex
+        self.y+=changey
+        self.rect.move_ip(changex, changey)
     def pos(self, x,y):
         self.x=x
         self.y=y
@@ -87,9 +91,9 @@ while(y<=heighttilemax-1):
     x=0
     while(x<=widthtilemax-1):
         if(level[y][x]=="W"):
-            walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png').convert()))
+            walllist.append(Wall(x*size, y*size, pygame.image.load('img/wall.png').convert())) #assuming wall has no transparency
         elif(level[y][x]=="I"):
-            listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png').convert()))
+            listitem.append(Item(x*size+8,y*size+8, pygame.image.load('img/item.png').convert())) #assuming item has no transparency
             itemcount+=1
         elif(level[y][x]=="P"):
             me=Player(x*size,y*size, pygame.image.load('img/player.png'))
@@ -117,7 +121,6 @@ while 1:
         elif event.key == K_a: k_a = down * -him.speed
         elif event.key == K_d: k_d = down * him.speed
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
-        #if event.type == pygame.QUIT: pygame.quit ()
     screenw.fill(BLACK)
     screen.fill(BLACK)
     #him.changepos(k_a+k_d, k_w+k_s)
