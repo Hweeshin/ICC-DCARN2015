@@ -67,7 +67,6 @@ pygame.init()
 windowheight=600
 windowwidth=800
 screenw = pygame.display.set_mode((windowwidth, windowheight))
-blacksurface=pygame.Surface((windowwidth,windowheight))
 clock = pygame.time.Clock()
 level=[]
 level = open("level.txt").read().split('\n')#Note: The width must always be equal.
@@ -119,6 +118,7 @@ while 1:
         elif event.key == K_d: k_d = down * him.speed
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
         #if event.type == pygame.QUIT: pygame.quit ()
+    screenw.fill(BLACK)
     screen.fill(BLACK)
     #him.changepos(k_a+k_d, k_w+k_s)
     him.changepos(k_a+k_d, 0) #move the enemy on X axis
@@ -208,6 +208,5 @@ while 1:
     diffy+=me.y-prevy
     me.draw()
     him.draw()
-    screenw.blit(blacksurface, (0,0))
     screenw.blit(screen, (-diffx, -diffy))
     pygame.display.flip()
