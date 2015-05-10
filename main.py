@@ -127,11 +127,13 @@ while 1:
         while x>=0:
             if him.rect.colliderect(walllist[x].rect)==True:
                 him.pos(walllist[x].x+walllist[x].rect.width,him.y)
+                x=-1 #Skip the rest of the loop
             x-=1
     else:
         while x>=0:
             if him.rect.colliderect(walllist[x].rect)==True:
                 him.pos(walllist[x].x-him.rect.width,him.y)
+                x=-1 #Skip the rest of the loop
             x-=1
     x=len(walllist)-1
     him.changepos(0, k_w+k_s) #move the enemy on Y axis
@@ -139,16 +141,18 @@ while 1:
           while x>=0:
             if him.rect.colliderect(walllist[x].rect)==True:
                 him.pos(him.x,walllist[x].y+walllist[x].rect.height)
+                x=-1 #Skip the rest of the loop
             x-=1
     else:
         while x>=0:
             if him.rect.colliderect(walllist[x].rect)==True:
                 him.pos(him.x,walllist[x].y-him.rect.height)
+                x=-1 #Skip the rest of the loop
             x-=1
     if(him.x<0):
-        him.pos(0, me.y)
+        him.pos(0, him.y)
     if(him.y<0):
-        him.pos(me.x, 0)
+        him.pos(him.x, 0)
 
     prevx=me.x
     prevy=me.y
@@ -158,11 +162,13 @@ while 1:
         while x>=0:
             if me.rect.colliderect(walllist[x].rect)==True:
                 me.pos(walllist[x].x+walllist[x].rect.width,me.y)
+                x=-1 #Skip the rest of the loop
             x-=1
     else:
         while x>=0:
             if me.rect.colliderect(walllist[x].rect)==True:
                 me.pos(walllist[x].x-me.rect.width,me.y)
+                x=-1 #Skip the rest of the loop
             x-=1
     x=len(walllist)-1
     me.changepos(0, k_down+k_up) #move the player on Y axis
@@ -170,11 +176,13 @@ while 1:
           while x>=0:
             if me.rect.colliderect(walllist[x].rect)==True:
                 me.pos(me.x,walllist[x].y+walllist[x].rect.height)
+                x=-1 #Skip the rest of the loop
             x-=1
     else:
         while x>=0:
             if me.rect.colliderect(walllist[x].rect)==True:
                 me.pos(me.x,walllist[x].y-me.rect.height)
+                x=-1 #Skip the rest of the loop
             x-=1
     if(me.x<0):
         me.pos(0, me.y)
