@@ -26,6 +26,7 @@ class Enemy:
     def __init__(self,x,y, surface):
         self.x=x
         self.y=y
+        self.dest=[]
         self.surface=surface
         self.speed=8
         self.rect=self.surface.get_rect()
@@ -40,6 +41,20 @@ class Enemy:
         self.rect.topleft = (self.x, self.y)
     def draw(self):
         screen.blit(self.surface, self.rect)
+    def destadd(self, x, y):#Move to this COORDINATE
+        self.dest.append((x,y))
+    def moving(self):
+        if self.dest:
+            destx, desty=self.dest[0]
+            if (destx, desty)==(self.x, self.y):
+                self.dest.pop(0)
+                self.moving()
+            #distance=math.sqrt(math.pow(self.x-destx, 2) + math.pow(self.y-desty, 2))
+            #unit=self.speed/distance
+            #dx=(self.x-destx)*unit
+            #dy=(self.y-desty)*unit
+            else:
+                self.pos(destx, desty)
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
@@ -83,6 +98,7 @@ walllist=[]
 listitem=[]
 heighttilemax=len(level)
 widthtilemax=len(level[0])
+map=[]
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
 screen=pygame.Surface((widthmax, heightmax))
@@ -124,39 +140,9 @@ while 1:
         elif event.key == K_ESCAPE: pygame.quit()# quit the game
     screenw.fill(BLACK)
     screen.fill(BLACK)
-    #him.changepos(k_a+k_d, k_w+k_s)
-    him.changepos(k_a+k_d, 0) #move the enemy on X axis
-    x=len(walllist)-1
-    if k_d+k_a<0:
-        while x>=0:
-            if him.rect.colliderect(walllist[x].rect)==True:
-                him.pos(walllist[x].x+walllist[x].rect.width,him.y)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    else:
-        while x>=0:
-            if him.rect.colliderect(walllist[x].rect)==True:
-                him.pos(walllist[x].x-him.rect.width,him.y)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    x=len(walllist)-1
-    him.changepos(0, k_w+k_s) #move the enemy on Y axis
-    if k_w+k_s<0:
-          while x>=0:
-            if him.rect.colliderect(walllist[x].rect)==True:
-                him.pos(him.x,walllist[x].y+walllist[x].rect.height)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    else:
-        while x>=0:
-            if him.rect.colliderect(walllist[x].rect)==True:
-                him.pos(him.x,walllist[x].y-him.rect.height)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    if(him.x<0):
-        him.pos(0, him.y)
-    if(him.y<0):
-        him.pos(him.x, 0)
+    if k_a+k_d!=0 or k_w+k_s!=0:
+        him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
+        him.moving()
 
     prevx=me.x
     prevy=me.y
