@@ -1,3 +1,4 @@
+import math
 #Player
 class Player:
     def __init__(self,x,y, surface):
@@ -5,6 +6,7 @@ class Player:
         self.y=y
         self.surface=surface
         self.speed=8
+        self.itemcollected=0
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
@@ -21,6 +23,10 @@ class Player:
         return self.x+(self.rect.width/2)
     def centrey(self):
         return self.y+(self.rect.height/2)
+    def tilex(self, tilesize):
+        return math.ceil(self.x/tilesize)
+    def tiley(self, tilesize):
+        return math.ceil(self.y/tilesize)
 #slendy or any other enemy
 class Enemy:
     def __init__(self,x,y, surface):
@@ -29,6 +35,7 @@ class Enemy:
         self.dest=[]
         self.surface=surface
         self.speed=8
+        self.chasing=False #Not chasing the player
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
@@ -80,7 +87,7 @@ class Item:
 
 
 # INTIALISATION
-import pygame, math, sys
+import pygame, sys
 from pygame.locals import *
 pygame.init()
 windowheight=600
@@ -102,6 +109,8 @@ map=[]
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
 screen=pygame.Surface((widthmax, heightmax))
+vision=pygame.image.load('img/vision.png')
+visionrect=vision.get_rect()
 y=0
 wallsurface=pygame.image.load('img/wall.png').convert()#assuming wall has no transparency
 itemsurface=pygame.image.load('img/item.png').convert()#assuming item has no transparency
@@ -206,5 +215,7 @@ while 1:
     diffy+=me.y-prevy
     me.draw()
     him.draw()
+    visionrect.center=me.rect.center
+    screen.blit(vision, visionrect)
     screenw.blit(screen, (-diffx, -diffy))
     pygame.display.flip()
