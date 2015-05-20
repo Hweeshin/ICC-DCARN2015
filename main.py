@@ -74,6 +74,16 @@ class Wall:
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
 
+class texture:
+    def __init__(self,x,y, surface):
+        self.x=x
+        self.y=y
+        self.surface=surface
+        self.rect=self.surface.get_rect()
+        self.draw()
+    def draw(self):
+        self.rect.topleft=(self.x, self.y)
+        screen.blit(self.surface, self.rect)
 class Item:
     def __init__(self,x,y, surface):
         self.x=x
@@ -84,7 +94,6 @@ class Item:
     def draw(self):
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
-
 
 # INTIALISATION
 import pygame, sys
@@ -147,7 +156,7 @@ while(y<=heighttilemax-1):
     y+=1
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
-gamestate=1#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
+gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
 
 while 1:
     # USER INPUT
