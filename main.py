@@ -118,6 +118,13 @@ playrect.topleft=(330, 350)
 slendyman=pygame.image.load('img/slendyman.png').convert()
 slendymanrect=slendyman.get_rect()
 slendymanrect.topleft=(100,130)
+victory=pygame.image.load('img/victory.png').convert()
+victoryrect=victory.get_rect()
+victoryrect.topleft=(50,190)
+mainmenu_normal=pygame.image.load('img/mainmenu_normal.png').convert()
+mainmenurect=mainmenu_normal.get_rect()
+mainmenu_highlighted=pygame.image.load('img/mainmenu_highlighted.png').convert()
+mainmenurect.topleft=(470, 425)
 y=0
 wallsurface=pygame.image.load('img/wall.png').convert()#assuming wall has no transparency
 itemsurface=pygame.image.load('img/item.png').convert()#assuming item has no transparency
@@ -137,19 +144,18 @@ while(y<=heighttilemax-1):
     y+=1
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
-gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
-button1=button2=button3=False
+gamestate=2#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
 
 while 1:
     # USER INPUT
     clock.tick(30)
+    button1=button2=button3=False
     if gamestate==0:
         for event in pygame.event.get():
             if hasattr(event, 'key'):
                 if event.key == K_ESCAPE: pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 (button1, button2, button3)=pygame.mouse.get_pressed()
-        
         screenw.fill(BLACK)
         screenw.blit(slendyman, slendymanrect)
         (mousex, mousey)=pygame.mouse.get_pos()
@@ -159,6 +165,30 @@ while 1:
                 gamestate=3
         else:
             screenw.blit(play_normal, playrect)
+        pygame.display.flip()
+    if gamestate==1:
+        for event in pygame.event.get():
+            if hasattr(event, 'key'):
+                if event.key == K_ESCAPE: pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                (button1, button2, button3)=pygame.mouse.get_pressed()
+        screenw.fill(BLACK)
+        pygame.display.flip()
+    if gamestate==2:
+        for event in pygame.event.get():
+            if hasattr(event, 'key'):
+                if event.key == K_ESCAPE: pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                (button1, button2, button3)=pygame.mouse.get_pressed()
+        screenw.fill(BLACK)
+        screenw.blit(victory, victoryrect)
+        (mousex, mousey)=pygame.mouse.get_pos()
+        if mainmenurect.collidepoint(mousex, mousey):
+            screenw.blit(mainmenu_highlighted, mainmenurect)
+            if button1==True:
+                gamestate=0
+        else:
+            screenw.blit(mainmenu_normal, mainmenurect)
         pygame.display.flip()
     if gamestate==3:
         for event in pygame.event.get():
