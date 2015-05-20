@@ -109,8 +109,15 @@ map=[]
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
 screen=pygame.Surface((widthmax, heightmax))
-vision=pygame.image.load('img/vision.png')
+vision=pygame.image.load('img/vision6.png')
 visionrect=vision.get_rect()
+play_normal=pygame.image.load('img/Play_normal.png').convert()
+playrect=play_normal.get_rect()
+play_highlighted=pygame.image.load('img/Play_highlighted.png').convert()
+playrect.topleft=(330, 350)
+slendyman=pygame.image.load('img/slendyman.png').convert()
+slendymanrect=slendyman.get_rect()
+slendymanrect.topleft=(100,130)
 y=0
 wallsurface=pygame.image.load('img/wall.png').convert()#assuming wall has no transparency
 itemsurface=pygame.image.load('img/item.png').convert()#assuming item has no transparency
@@ -128,94 +135,112 @@ while(y<=heighttilemax-1):
             him=Enemy(x*size,y*size, pygame.image.load('img/enemy.png'))
         x+=1
     y+=1
-
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
+gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
+button1=button2=button3=False
 
 while 1:
     # USER INPUT
     clock.tick(30)
-    for event in pygame.event.get():
-        if not hasattr(event, 'key'): continue
-        down = event.type == KEYDOWN # key down or up?
-        if event.key == K_RIGHT: k_right = down * me.speed
-        elif event.key == K_LEFT: k_left = down * -me.speed
-        elif event.key == K_UP: k_up = down * -me.speed
-        elif event.key == K_DOWN: k_down = down * me.speed
-        elif event.key == K_w: k_w = down * -him.speed
-        elif event.key == K_s: k_s = down * him.speed
-        elif event.key == K_a: k_a = down * -him.speed
-        elif event.key == K_d: k_d = down * him.speed
-        elif event.key == K_ESCAPE: pygame.quit()# quit the game
-    screenw.fill(BLACK)
-    screen.fill(BLACK)
-    if k_a+k_d!=0 or k_w+k_s!=0:
-        him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
-        him.moving()
+    if gamestate==0:
+        for event in pygame.event.get():
+            if hasattr(event, 'key'):
+                if event.key == K_ESCAPE: pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                (button1, button2, button3)=pygame.mouse.get_pressed()
+        
+        screenw.fill(BLACK)
+        screenw.blit(slendyman, slendymanrect)
+        (mousex, mousey)=pygame.mouse.get_pos()
+        if playrect.collidepoint(mousex, mousey):
+            screenw.blit(play_highlighted, playrect)
+            if button1==True:
+                gamestate=3
+        else:
+            screenw.blit(play_normal, playrect)
+        pygame.display.flip()
+    if gamestate==3:
+        for event in pygame.event.get():
+            if not hasattr(event, 'key'): continue
+            down = event.type == KEYDOWN # key down or up?
+            if event.key == K_RIGHT: k_right = down * me.speed
+            elif event.key == K_LEFT: k_left = down * -me.speed
+            elif event.key == K_UP: k_up = down * -me.speed
+            elif event.key == K_DOWN: k_down = down * me.speed
+            elif event.key == K_w: k_w = down * -him.speed
+            elif event.key == K_s: k_s = down * him.speed
+            elif event.key == K_a: k_a = down * -him.speed
+            elif event.key == K_d: k_d = down * him.speed
+            elif event.key == K_ESCAPE: pygame.quit()# quit the game
+        screen.fill(BLACK)
+        if k_a+k_d!=0 or k_w+k_s!=0:
+            him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
+            him.moving()
 
-    prevx=me.x
-    prevy=me.y
-    me.changepos(k_left+k_right, 0) #move the player on X axis
-    x=len(walllist)-1
-    if k_left+k_right<0:
-        while x>=0:
-            if me.rect.colliderect(walllist[x].rect)==True:
-                me.pos(walllist[x].x+walllist[x].rect.width,me.y)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    else:
-        while x>=0:
-            if me.rect.colliderect(walllist[x].rect)==True:
-                me.pos(walllist[x].x-me.rect.width,me.y)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    x=len(walllist)-1
-    me.changepos(0, k_down+k_up) #move the player on Y axis
-    if k_up+k_down<0:
-          while x>=0:
-            if me.rect.colliderect(walllist[x].rect)==True:
-                me.pos(me.x,walllist[x].y+walllist[x].rect.height)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    else:
-        while x>=0:
-            if me.rect.colliderect(walllist[x].rect)==True:
-                me.pos(me.x,walllist[x].y-me.rect.height)
-                x=-1 #Skip the rest of the loop
-            x-=1
-    if(me.x<0):
-        me.pos(0, me.y)
-    elif(me.x+me.rect.width>widthmax):
-        me.pos(widthmax-me.rect.width, me.y)
-    if(me.y<0):
-        me.pos(me.x, 0)
-    elif(me.y+me.rect.height>heightmax):
-        me.pos(me.x, heightmax-me.rect.height)
-    x=len(walllist)-1
-    while x>=0:
-        walllist[x].draw()
-        x-=1
-    if me.rect.colliderect(him.rect)==True:
-        print("GAME OVER")
-    x=len(listitem)-1
-    while x>=0:
-        listitem[x].draw()
-        if me.rect.colliderect(listitem[x].rect)==True:
-            del listitem[x]
-            itemcount-=1
-            print("Collected")
-            if x==len(listitem)-1: x=-1
-            else:
+        prevx=me.x
+        prevy=me.y
+        me.changepos(k_left+k_right, 0) #move the player on X axis
+        x=len(walllist)-1
+        if k_left+k_right<0:
+            while x>=0:
+                if me.rect.colliderect(walllist[x].rect)==True:
+                    me.pos(walllist[x].x+walllist[x].rect.width,me.y)
+                    x=-1 #Skip the rest of the loop
                 x-=1
-        else: x-=1
-        if itemcount==0:
-            print("VICTORY")
-
-    diffx+=me.x-prevx
-    diffy+=me.y-prevy
-    me.draw()
-    him.draw()
-    visionrect.center=me.rect.center
-    screen.blit(vision, visionrect)
-    screenw.blit(screen, (-diffx, -diffy))
-    pygame.display.flip()
+        else:
+            while x>=0:
+                if me.rect.colliderect(walllist[x].rect)==True:
+                    me.pos(walllist[x].x-me.rect.width,me.y)
+                    x=-1 #Skip the rest of the loop
+                x-=1
+        x=len(walllist)-1
+        me.changepos(0, k_down+k_up) #move the player on Y axis
+        if k_up+k_down<0:
+              while x>=0:
+                if me.rect.colliderect(walllist[x].rect)==True:
+                    me.pos(me.x,walllist[x].y+walllist[x].rect.height)
+                    x=-1 #Skip the rest of the loop
+                x-=1
+        else:
+            while x>=0:
+                if me.rect.colliderect(walllist[x].rect)==True:
+                    me.pos(me.x,walllist[x].y-me.rect.height)
+                    x=-1 #Skip the rest of the loop
+                x-=1
+        if(me.x<0):
+            me.pos(0, me.y)
+        elif(me.x+me.rect.width>widthmax):
+            me.pos(widthmax-me.rect.width, me.y)
+        if(me.y<0):
+            me.pos(me.x, 0)
+        elif(me.y+me.rect.height>heightmax):
+            me.pos(me.x, heightmax-me.rect.height)
+        x=len(walllist)-1
+        while x>=0:
+            walllist[x].draw()
+            x-=1
+        if me.rect.colliderect(him.rect)==True:
+            print("GAME OVER")
+        x=len(listitem)-1
+        while x>=0:
+            listitem[x].draw()
+            if me.rect.colliderect(listitem[x].rect)==True:
+                del listitem[x]
+                itemcount-=1
+                me.itemcollected+=1
+                print("Collected")
+                if x==len(listitem)-1: x=-1
+                else:
+                    x-=1
+            else: x-=1
+            if itemcount==0:
+                print("VICTORY")
+        diffx+=me.x-prevx
+        diffy+=me.y-prevy
+        me.draw()
+        him.draw()
+        visionrect.center=me.rect.center
+        screen.blit(vision, visionrect)
+        screenw.blit(screen, (-diffx, -diffy))
+        pygame.display.flip()
