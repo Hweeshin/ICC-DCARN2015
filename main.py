@@ -29,14 +29,15 @@ class Player:
         return math.ceil(self.y/tilesize)
 #slendy or any other enemy
 class Enemy:
-    def __init__(self,x,y, surface):
+    def __init__(self,x,y, surfaces):
         self.x=x
         self.y=y
         self.dest=[]
-        self.surface=surface
+        self.index=0
+        self.surfaces=surfaces
         self.speed=8
         self.chasing=False #Not chasing the player
-        self.rect=self.surface.get_rect()
+        self.rect=self.surfaces[self.index].get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
         self.x+=changex
@@ -47,7 +48,7 @@ class Enemy:
         self.y=y
         self.rect.topleft = (self.x, self.y)
     def draw(self):
-        screen.blit(self.surface, self.rect)
+        screen.blit(self.surfaces[self.index], self.rect)
     def destadd(self, x, y):#Move to this COORDINATE
         self.dest.append((x,y))
     def moving(self):
@@ -151,12 +152,13 @@ while(y<=heighttilemax-1):
         elif(level[y][x]=="P"):
             me=Player(x*size,y*size, pygame.image.load('img/player.png'))
         elif(level[y][x]=="S"):
-            him=Enemy(x*size,y*size, pygame.image.load('img/enemy.png'))
+            him=Enemy(x*size,y*size, [pygame.image.load('img/slender1.png'), pygame.image.load('img/slender2.png'), pygame.image.load('img/slender3.png'), pygame.image.load('img/slender4.png'), pygame.image.load('img/slender5.png')])
         x+=1
     y+=1
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
 gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
+animtick=0
 
 while 1:
     # USER INPUT
@@ -227,7 +229,6 @@ while 1:
         if k_a+k_d!=0 or k_w+k_s!=0:
             him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
             him.moving()
-
         prevx=me.x
         prevy=me.y
         me.changepos(k_left+k_right, 0) #move the player on X axis
@@ -290,6 +291,14 @@ while 1:
         diffy+=me.y-prevy
         me.draw()
         him.draw()
+        if animtick<1:
+            animtick+=1
+        else:
+            animtick=0
+            if him.index<4:
+                him.index+=1
+            else:
+                him.index=0
         visionrect.center=me.rect.center
         screen.blit(vision, visionrect)
         screenw.blit(screen, (-diffx, -diffy))
