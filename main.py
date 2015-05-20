@@ -125,6 +125,9 @@ mainmenu_normal=pygame.image.load('img/mainmenu_normal.png').convert()
 mainmenurect=mainmenu_normal.get_rect()
 mainmenu_highlighted=pygame.image.load('img/mainmenu_highlighted.png').convert()
 mainmenurect.topleft=(470, 425)
+gameover=pygame.image.load('img/gameover.png').convert()
+gameoverrect=gameover.get_rect()
+gameoverrect.topleft=(80,200)
 y=0
 wallsurface=pygame.image.load('img/wall.png').convert()#assuming wall has no transparency
 itemsurface=pygame.image.load('img/item.png').convert()#assuming item has no transparency
@@ -144,7 +147,7 @@ while(y<=heighttilemax-1):
     y+=1
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
-gamestate=2#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
+gamestate=1#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
 
 while 1:
     # USER INPUT
@@ -173,6 +176,14 @@ while 1:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 (button1, button2, button3)=pygame.mouse.get_pressed()
         screenw.fill(BLACK)
+        screenw.blit(gameover, gameoverrect)
+        (mousex, mousey)=pygame.mouse.get_pos()
+        if mainmenurect.collidepoint(mousex, mousey):
+            screenw.blit(mainmenu_highlighted, mainmenurect)
+            if button1==True:
+                gamestate=0
+        else:
+            screenw.blit(mainmenu_normal, mainmenurect)
         pygame.display.flip()
     if gamestate==2:
         for event in pygame.event.get():
