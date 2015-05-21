@@ -1,4 +1,6 @@
-import math
+import math, random
+def distance(x1, y1, x2, y2):
+    return math.sqrt(math.pow(x1-x2,2)+math.pow(y1-y2,2))
 #Player
 class Player:
     def __init__(self,x,y, surface):
@@ -8,6 +10,7 @@ class Player:
         self.originaly=y
         self.surface=surface
         self.speed=8
+        self.vision=6#change this if vision changes
         self.itemcollected=0
         self.rect=self.surface.get_rect()
         self.pos(self.x, self.y)
@@ -68,8 +71,16 @@ class Enemy:
             #dy=(self.y-desty)*unit
             else:
                 self.pos(destx, desty)
-        def levelset(self, newlevel):
-            self.level=newlevel
+    def levelset(self, newlevel):
+        self.level=newlevel
+    def wheretogo(self, playerx, playery, tilex, tiley, playervision):
+        if self.level==0:
+            self.pos(playerx+size*playervision, playery+size*playervision)
+        elif self.level==1:
+            random.seed()
+            random.randint(-playervision, playervision)
+    def gettiley(self, tilexdiff, distance):
+        random.seed()
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
@@ -125,7 +136,7 @@ walllist=[]
 listitem=[]
 heighttilemax=len(level)
 widthtilemax=len(level[0])
-map=[]
+tilemap={}#yes guys I am using a dictionary, shit is going down
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
 screen=pygame.Surface((widthmax, heightmax))
@@ -165,6 +176,7 @@ while(y<=heighttilemax-1):
         x+=1
     y+=1
 itemcount=len(listitem)
+totalitem=itemcount
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
 gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
@@ -237,15 +249,11 @@ while 1:
             elif event.key == K_LEFT: k_left = down * -me.speed
             elif event.key == K_UP: k_up = down * -me.speed
             elif event.key == K_DOWN: k_down = down * me.speed
-            elif event.key == K_w: k_w = down * -him.speed
-            elif event.key == K_s: k_s = down * him.speed
-            elif event.key == K_a: k_a = down * -him.speed
-            elif event.key == K_d: k_d = down * him.speed
             elif event.key == K_ESCAPE: pygame.quit()# quit the game
         screen.fill(BLACK)
-        if k_a+k_d!=0 or k_w+k_s!=0:
-            him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
-            him.moving()
+        #if k_a+k_d!=0 or k_w+k_s!=0:
+        #    him.destadd(him.x+k_a+k_d, him.y+k_w+k_s)
+        #    him.moving()
         prevx=me.x
         prevy=me.y
         me.changepos(k_left+k_right, 0) #move the player on X axis
@@ -296,7 +304,6 @@ while 1:
             if me.rect.colliderect(listitem[x].rect)==True:
                 del listitem[x]
                 itemcount-=1
-                me.itemcollected+=1
                 print("Collected")#TODO: IMPLEMENT AN ACTUAL PAGE TO READ
                 if x==len(listitem)-1: x=-1
                 else:
@@ -306,6 +313,8 @@ while 1:
                 gamestate=2
         diffx+=me.x-prevx
         diffy+=me.y-prevy
+        him.levelset(totalitem-itemcount)
+        him.wheretogo(me.x, me.y, me.tilex(size), me.tiley(size), me.vision)
         me.draw()
         him.draw()
         if animtick<2:
