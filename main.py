@@ -4,6 +4,8 @@ class Player:
     def __init__(self,x,y, surface):
         self.x=x
         self.y=y
+        self.originalx=x
+        self.originaly=y
         self.surface=surface
         self.speed=8
         self.itemcollected=0
@@ -27,6 +29,8 @@ class Player:
         return math.ceil(self.x/tilesize)
     def tiley(self, tilesize):
         return math.ceil(self.y/tilesize)
+    def respawn(self):
+        self.pos(self.originalx, self.originaly)
 #slendy or any other enemy
 class Enemy:
     def __init__(self,x,y, surfaces):
@@ -95,6 +99,9 @@ class Item:
     def draw(self):
         self.rect.topleft=(self.x, self.y)
         screen.blit(self.surface, self.rect)
+
+def reset(playerobj):
+    playerobj.respawn()
 
 # INTIALISATION
 import pygame, sys
@@ -176,6 +183,10 @@ while 1:
         if playrect.collidepoint(mousex, mousey):
             screenw.blit(play_highlighted, playrect)
             if button1==True:
+                reset(me)
+                diffx=me.centrex()-windowwidth/2
+                diffy=me.centrey()-windowheight/2
+                k_up = k_down = k_left = k_right = 0
                 gamestate=3
         else:
             screenw.blit(play_normal, playrect)
@@ -272,7 +283,7 @@ while 1:
             walllist[x].draw()
             x-=1
         if me.rect.colliderect(him.rect)==True:
-            print("GAME OVER")
+            gamestate=1
         x=len(listitem)-1
         while x>=0:
             listitem[x].draw()
@@ -291,7 +302,7 @@ while 1:
         diffy+=me.y-prevy
         me.draw()
         him.draw()
-        if animtick<1:
+        if animtick<2:
             animtick+=1
         else:
             animtick=0
