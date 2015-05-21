@@ -41,6 +41,7 @@ class Enemy:
         self.surfaces=surfaces
         self.speed=8
         self.chasing=False #Not chasing the player
+        self.level=0#0 is lowest, 2 is highest
         self.rect=self.surfaces[self.index].get_rect()
         self.pos(self.x, self.y)
     def changepos(self, changex, changey):
@@ -67,6 +68,8 @@ class Enemy:
             #dy=(self.y-desty)*unit
             else:
                 self.pos(destx, desty)
+        def levelset(self, newlevel):
+            self.level=newlevel
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
@@ -147,7 +150,7 @@ gameoverrect=gameover.get_rect()
 gameoverrect.topleft=(80,200)
 y=0
 wallsurface=pygame.image.load('img/wall.png').convert()#assuming wall has no transparency
-itemsurface=pygame.image.load('img/item.png').convert()#assuming item has no transparency
+itemsurface=pygame.image.load('img/pages.png')
 while(y<=heighttilemax-1):
     x=0
     while(x<=widthtilemax-1):
@@ -155,17 +158,18 @@ while(y<=heighttilemax-1):
             walllist.append(Wall(x*size, y*size, wallsurface))
         elif(level[y][x]=="I"):
             listitem.append(Item(x*size+8,y*size+8, itemsurface))
-            itemcount+=1
         elif(level[y][x]=="P"):
             me=Player(x*size,y*size, pygame.image.load('img/player.png'))
         elif(level[y][x]=="S"):
             him=Enemy(x*size,y*size, [pygame.image.load('img/slender1.png'), pygame.image.load('img/slender2.png'), pygame.image.load('img/slender3.png'), pygame.image.load('img/slender4.png'), pygame.image.load('img/slender5.png')])
         x+=1
     y+=1
+itemcount=len(listitem)
 diffx=me.centrex()-windowwidth/2
 diffy=me.centrey()-windowheight/2
 gamestate=0#0 is main menu, 1 is death screen, 2 is victory screen, 3 is playing
 animtick=0
+listitembackup=list(listitem)
 
 while 1:
     # USER INPUT
@@ -187,6 +191,8 @@ while 1:
                 diffx=me.centrex()-windowwidth/2
                 diffy=me.centrey()-windowheight/2
                 k_up = k_down = k_left = k_right = 0
+                listitem=list(listitembackup)
+                itemcount=len(listitem)
                 gamestate=3
         else:
             screenw.blit(play_normal, playrect)
@@ -291,13 +297,13 @@ while 1:
                 del listitem[x]
                 itemcount-=1
                 me.itemcollected+=1
-                print("Collected")
+                print("Collected")#TODO: IMPLEMENT AN ACTUAL PAGE TO READ
                 if x==len(listitem)-1: x=-1
                 else:
                     x-=1
             else: x-=1
             if itemcount==0:
-                print("VICTORY")
+                gamestate=2
         diffx+=me.x-prevx
         diffy+=me.y-prevy
         me.draw()
