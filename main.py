@@ -47,6 +47,7 @@ class Enemy:
         self.level=0#0 is lowest, 2 is highest
         self.rect=self.surfaces[self.index].get_rect()
         self.pos(self.x, self.y)
+        self.time=0
     def changepos(self, changex, changey):
         self.x+=changex
         self.y+=changey
@@ -78,24 +79,32 @@ class Enemy:
             self.pos(playerx+size*playervision, playery+size*playervision)
         elif self.level==1:
             random.seed()
-            locations=[]
-            x=-6
-            while x<=6:
-                a=(tilex+x, int(tiley-(playervision-math.fabs(x))))
-                b=(tilex+x, int(tiley+(playervision-math.fabs(x))))
-                locations.append(a)
-                if a!=b:
-                    locations.append(b)
-                x+=1
-            i=0
-            while i<len(locations):
-                if(tilemap.get(locations[i])=='S'):
-                    locations.pop(i)
+            x=random.randint(0, 100)
+            if pygame.time.get_ticks()-self.time>=5000:
+                if x>=90:
+                    random.seed()
+                    locations=[]
+                    x=-6
+                    while x<=6:
+                        a=(tilex+x, int(tiley-(playervision-math.fabs(x))))
+                        b=(tilex+x, int(tiley+(playervision-math.fabs(x))))
+                        locations.append(a)
+                        if a!=b:
+                            locations.append(b)
+                        x+=1
+                    i=0
+                    while i<len(locations):
+                        if(tilemap.get(locations[i])=='S'):
+                            locations.pop(i)
+                        else:
+                            i+=1
+                    x=random.randint(0, len(locations))
+                    a,b=locations[x-1]
+                    self.time=pygame.time.get_ticks()
+                    self.pos(a*size, b*size)
                 else:
-                    i+=1
-            x=random.randint(0, len(locations))
-            a,b=locations[x-1]
-            self.pos(a*size, b*size)
+                    self.time=pygame.time.get_ticks()-4000
+                    print("Delayed")
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
