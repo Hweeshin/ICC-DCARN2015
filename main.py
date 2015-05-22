@@ -29,9 +29,9 @@ class Player:
     def centrey(self):
         return self.y+(self.rect.height/2)
     def tilex(self, tilesize):
-        return math.ceil(self.x/tilesize)
+        return int(math.ceil(self.x/tilesize))
     def tiley(self, tilesize):
-        return math.ceil(self.y/tilesize)
+        return int(math.ceil(self.y/tilesize))
     def respawn(self):
         self.pos(self.originalx, self.originaly)
 #slendy or any other enemy
@@ -78,9 +78,24 @@ class Enemy:
             self.pos(playerx+size*playervision, playery+size*playervision)
         elif self.level==1:
             random.seed()
-            random.randint(-playervision, playervision)
-    def gettiley(self, tilexdiff, distance):
-        random.seed()
+            locations=[]
+            x=-6
+            while x<=6:
+                a=(tilex+x, int(tiley-(playervision-math.fabs(x))))
+                b=(tilex+x, int(tiley+(playervision-math.fabs(x))))
+                locations.append(a)
+                if a!=b:
+                    locations.append(b)
+                x+=1
+            i=0
+            while i<len(locations):
+                if(tilemap.get(locations[i])=='S'):
+                    locations.pop(i)
+                else:
+                    i+=1
+            x=random.randint(0, len(locations))
+            a,b=locations[x-1]
+            self.pos(a*size, b*size)
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
@@ -136,7 +151,7 @@ walllist=[]
 listitem=[]
 heighttilemax=len(level)
 widthtilemax=len(level[0])
-tilemap={}#yes guys I am using a dictionary, shit is going down
+tilemap={}#yes guys I am using a dictionary, shit is going down NOTE: ZERO INDEXING
 heightmax=heighttilemax*size
 widthmax=widthtilemax*size
 screen=pygame.Surface((widthmax, heightmax))
@@ -167,6 +182,7 @@ while(y<=heighttilemax-1):
     while(x<=widthtilemax-1):
         if(level[y][x]=="W"):
             walllist.append(Wall(x*size, y*size, wallsurface))
+            tilemap[x, y]='S'
         elif(level[y][x]=="I"):
             listitem.append(Item(x*size+8,y*size+8, itemsurface))
         elif(level[y][x]=="P"):
@@ -205,6 +221,7 @@ while 1:
                 k_up = k_down = k_left = k_right = 0
                 listitem=list(listitembackup)
                 itemcount=len(listitem)
+                him.levelset(0)
                 gamestate=3
         else:
             screenw.blit(play_normal, playrect)
