@@ -24,6 +24,7 @@ def blankscreen():
     global screen
     global BLACK
     screen.fill(BLACK)
+    screenw.fill(BLACK)
 def drawplayer():
     global me
     me.draw()
@@ -228,6 +229,7 @@ class Enemy:
     def levelset(self, newlevel):
         self.level=newlevel
     def wheretogo(self, playerx, playery, tilex, tiley, playervision):
+        global tilemap
         if self.level==0:
             self.pos(playerx+size*playervision, playery+size*playervision)
         elif self.level==1:
@@ -273,7 +275,7 @@ class Enemy:
                                     queue.append((x,y))
                                 y+=1
                             x+=1
-                        x=len(queue)-1
+                        x=0
                         while x<len(queue):
                             if tilemap.get(queue[x])=='S':
                                 queue.pop(x)
@@ -325,8 +327,12 @@ class Enemy:
                                 if d<=playervision:
                                     visionedge.append([d, key])
                             visionedge=sorted(visionedge, key=lambda n: n[0])
-                            placea=visionedge[len(visionedge)-1]
-                            place=placea[1]
+                            if len(visionedge)==0:
+                                self.repos=True
+                                place=(self.x,self.y)
+                            else:
+                                placea=visionedge[len(visionedge)-1]
+                                place=placea[1]
                         else:
                             random.seed()
                             x=random.randint(0, len(visionedge)-1)
@@ -338,8 +344,8 @@ class Enemy:
                         self.moving=0
                         self.chasing=True
             if self.chasing==True:
-                if pygame.time.get_ticks()-self.chasingtiming<=5000:
-                    if self.moving==3:
+                if pygame.time.get_ticks()-self.chasingtiming<=1500:
+                    if self.moving==5:
                         x=tilex
                         queue=[]
                         while x<=tilex+playervision:
@@ -349,7 +355,7 @@ class Enemy:
                                     queue.append((x,y))
                                 y+=1
                             x+=1
-                        x=len(queue)-1
+                        x=0
                         while x<len(queue):
                             if tilemap.get(queue[x])=='S':
                                 queue.pop(x)
@@ -486,7 +492,7 @@ while(y<=heighttilemax-1):
     while(x<=widthtilemax-1):
         if(level[y][x]=="W"):
             walllist.append(Wall(x*size, y*size, wallsurface))
-            tilemap[x, y]='S'
+            tilemap[(x, y)]='S'
         elif(level[y][x]=="I"):
             listitem.append(Item(x*size+8,y*size+8, itemsurface))
         elif(level[y][x]=="P"):

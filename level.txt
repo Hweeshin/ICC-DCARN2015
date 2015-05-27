@@ -1,50 +1,30 @@
-                                                  
-                                                  
-                                                  
-                        W                         
-                                                  
-                    W                             
-                                                  
-                                                  
-                                                  
-                                                  
-              W                                   
-                                                  
-                              W                   
-                                                  
-                                                  
-                                                  
-             I                                    
-                                                  
-                                                  
-                       I           I              
-                                                  
-               W                                  
-                                                  
-                           W           W          
-                                                  
-                             P                    
-                              W                   
-                                        W         
-                        W                         
-                                                  
-                             W                    
-                                                  
-                             S                    
-                   W                              
-                                       W          
-                        W                         
-                                                  
-               W               W                  
-                                                  
-                                                  
-                       W         W                
-                                                  
-                                                  
-                   W                    W         
-                                                  
-                                                  
-                                        W         
-                                                  
-                            W                     
-                                                  
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWW    WWWWWWWWW
+WWWWWWWWWWWWWWW     WWWWWWW    WWWWWWWWW
+WWWWWWWWWWWWWWW     WWWWWWWWW WWWWWWWWWW
+WWWWWWWWW         I WWW  WWWW WWWWWWWWWW
+WWWWWWWWW WWWWW     WWW  WWWW WWWWWWWWWW
+WWWWWWWWW WWWWW     WWW S     WWWWWWWWWW
+WWWWWW     WWWWWWWWWWWW  WW W WWWWWWWWWW
+WWWWWW     WWWWWWWWWWWWWWWW W WWWWWWWWWW
+WWWWWW     WWWWWWWWWWWW  WW W WW    WWWW
+WWWWWW     WWWWWWWWWWWW     W       WWWW
+WWWWWWWWW WWWWWWWWWWWWW  WWWW WW    WWWW
+WWWWWWWWW WWWWWWWWWWWWWI WWWW WW    WWWW
+WWWWWWWWW WWWWWWWWWWWWWWWWWWW WWWWWWWWWW
+         P                              
+                                        
+WWWWW WWWW WWWWWWWWW WWWWW WWWWWWWWWWWWW
+WWWWW WWWW WWWWWWWWW WWWWW WWWWWWWWWWWWW
+WWWWW WWW    WWWWW    WWW   WWWWWWWWWWWW
+WWWWW WWW    WWWWW             WWWWWWWWW
+WWWWW WWW    WWWWW    WWW   WW WWWWWWWWW
+WWWW    W    WWWWW WWWWWWWWWWW WWWWWWWWW
+WWWW    WWW WWW     WWWWWWWWW       WWWW
+WWWWWWWWWWW         WWWWWWWWW       WWWW
+WWWWWWWWWWWWWWW     WWWWWWWWWWW WW WWWWW
+WWWWWWWWWWWWWWW     WWWWWW   WW WW WWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWW      WW WWWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWI  WWWW   WWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW   WWWW
+WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
