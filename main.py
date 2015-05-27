@@ -1,6 +1,11 @@
 import math, random
 def distance(x1, y1, x2, y2):
     return math.sqrt(math.pow(x1-x2,2)+math.pow(y1-y2,2))
+def tiledistance(tilex1, tiley1, tilex2, tiley2):
+    return math.fabs((tilex1-tilex2)+(tiley1-tiley2))
+def tiledistance2(tilexy1, tilex2, tiley2):
+    tilex1, tiley1=tilexy1
+    return math.fabs((tilex1-tilex2)+(tiley1-tiley2))
 def checkinput():
     global k_right
     global k_up
@@ -190,6 +195,7 @@ class Enemy:
         self.pos(self.x, self.y)
         self.time=0
         self.chasingtiming=0
+        self.movetiming=0
     def changepos(self, changex, changey):
         self.x+=changex
         self.y+=changey
@@ -200,6 +206,10 @@ class Enemy:
         self.rect.topleft = (self.x, self.y)
     def draw(self):
         screen.blit(self.surfaces[self.index], self.rect)
+    def tilex(self, tilesize):
+        return int(math.ceil(self.x/tilesize))
+    def tiley(self, tilesize):
+        return int(math.ceil(self.y/tilesize))
     def destadd(self, x, y):#Move to this COORDINATE
         self.dest.append((x,y))
     def moving(self):
@@ -272,48 +282,130 @@ class Enemy:
                         self.chasing=False
                 elif x>=90:
                     if self.chasing==False:
-                        self.chasingtiming=pygame.time.get_ticks()
-                        random.seed()
-                        locations=[]
-                        x=-6
-                        while x<=6:
-                            a=(tilex+x, int(tiley-(playervision-math.fabs(x))))
-                            b=(tilex+x, int(tiley+(playervision-math.fabs(x))))
-                            locations.append(a)
-                            if a!=b:
-                                locations.append(b)
+                        x=tilex
+                        queue=[]
+                        while x<=tilex+playervision:
+                            y=tiley
+                            while y<=tiley+playervision:
+                                if tiledistance(x,y,tilex,tiley)<=playervision and tiledistance(x,y,tilex,tiley)!=0:
+                                    queue.append((x,y))
+                                y+=1
                             x+=1
-                        i=0
-                        while i<len(locations):
-                            if(tilemap.get(locations[i])=='S'):
-                                locations.pop(i)
+                        x=len(queue)-1
+                        while x<len(queue):
+                            if tilemap.get(queue[x])=='S':
+                                queue.pop(x)
                             else:
+                                x+=1
+                        queue=sorted(queue, key=lambda place: tiledistance2(place, tilex, tiley))
+                        i=0
+                        path={}
+                        lazy=0
+                        while i<len(queue) and lazy<=36:
+                            if tiledistance2(queue[i], tilex, tiley)==1:
+                                path[queue[i]]=[1, (tilex, tiley)]
                                 i+=1
-                        x=random.randint(0, len(locations))
-                        a,b=locations[x-1]
+                            else:
+                                x, y=queue[i]
+                                spots=[]
+                                if path.get((x-1,y), "N")!="N":
+                                    d=path[(x-1,y)][0]
+                                    spots.append([d+1, (x-1,y)])
+                                if path.get((x,y-1), "N")!="N":
+                                    d=path[(x,y-1)][0]
+                                    spots.append([d+1, (x,y-1)])
+                                if path.get((x+1,y), "N")!="N":
+                                    d=path[(x+1,y)][0]
+                                    spots.append([d+1, (x+1,y)])
+                                if path.get((x,y+1), "N")!="N":
+                                    d=path[(x,y+1)][0]
+                                    spots.append([d+1, (x,y+1)])
+                                if len(spots)!=0:
+                                    spots=sorted(spots, key=lambda n: n[0])
+                                    path[(x,y)]=spots[0]
+                                    i+=1
+                                else:
+                                    queue.pop(i)
+                                    queue.append((x,y))
+                                    lazy+=1
+                        visionedge=[]
+                        backup=path.copy()
+                        place=(0,0)
+                        while len(path)>0:
+                            key, value=path.popitem()
+                            d=value[0]
+                            if d==playervision:
+                                visionedge.append(key)
+                        if len(visionedge)==0:
+                            while len(path)>0:
+                                key, value=backup.popitem()
+                                d=value[0]
+                                if d<=playervision:
+                                    visionedge.append([d, key])
+                            visionedge=sorted(visionedge, key=lambda n: n[0])
+                            placea=visionedge[len(visionedge)-1]
+                            place=placea[1]
+                        else:
+                            random.seed()
+                            x=random.randint(0, len(visionedge)-1)
+                            place=visionedge[x]
                         self.time=pygame.time.get_ticks()
+                        a,b=place
                         self.pos(a*size, b*size)
+                        self.chasingtiming=pygame.time.get_ticks()
                         self.chasing=True
             if self.chasing==True:
                 if pygame.time.get_ticks()-self.chasingtiming<=5000:
-                    if math.fabs(self.x-playerx)<=self.speed:
-                        self.pos(playerx, self.y)
-                    else:
-                        if self.x-playerx>self.speed:
-                            self.pos(self.x-self.speed, self.y)
-                        elif playerx-self.x>self.speed:
-                            self.pos(self.x+self.speed, self.y)
+                    x=tilex
+                    queue=[]
+                    while x<=tilex+playervision:
+                        y=tiley
+                        while y<=tiley+playervision:
+                            if tiledistance(x,y,tilex,tiley)<=playervision:
+                                queue.append((x,y))
+                            y+=1
+                        x+=1
+                    x=len(queue)-1
+                    while x<len(queue):
+                        if tilemap.get(queue[x])=='S':
+                            queue.pop(x)
                         else:
-                            self.pos(self.x+self.speed, self.y)
-                    if math.fabs(self.y-playery)<=self.speed:
-                        self.pos(self.x, playery)
-                    else:
-                        if self.y-playery>self.speed:
-                            self.pos(self.x, self.y-self.speed)
-                        elif playery==self.y>self.speed:
-                            self.pos(self.x, self.y+self.speed)
-                else:
-                    self.chasing=False
+                            x+=1
+                    queue=sorted(queue, key=lambda place: tiledistance2(place, tilex, tiley))
+                    i=0
+                    path={}
+                    lazy=0
+                    while i<len(queue) and lazy<=36:
+                        if tiledistance2(queue[i], tilex, tiley)==1:
+                            path[queue[i]]=[1, (tilex, tiley)]
+                            i+=1
+                        else:
+                            x, y=queue[i]
+                            spots=[]
+                            if path.get((x-1,y), "N")!="N":
+                                d=path[(x-1,y)][0]
+                                spots.append([d+1, (x-1,y)])
+                            if path.get((x,y-1), "N")!="N":
+                                d=path[(x,y-1)][0]
+                                spots.append([d+1, (x,y-1)])
+                            if path.get((x+1,y), "N")!="N":
+                                d=path[(x+1,y)][0]
+                                spots.append([d+1, (x+1,y)])
+                            if path.get((x,y+1), "N")!="N":
+                                d=path[(x,y+1)][0]
+                                spots.append([d+1, (x,y+1)])
+                            if len(spots)!=0:
+                                spots=sorted(spots, key=lambda n: n[0])
+                                path[(x,y)]=spots[0]
+                                i+=1
+                            else:
+                                queue.pop(i)
+                                queue.append((x,y))
+                                lazy+=1
+                    newposx, newposy=path[(self.tilex(32),self.tiley(32))][1]
+                    print((newposx*32, newposy*32))
+                    print((self.x, self.y))
+                    self.pos(newposx*32, newposy*32)
 #Solid objects
 class Wall:
     def __init__(self,x,y, surface):
